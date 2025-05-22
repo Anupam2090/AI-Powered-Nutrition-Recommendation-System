@@ -37,33 +37,37 @@ nutrition-recommender/
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/nutrition-recommender.git
+   git clone https://github.com/Anupam2090/AI-Powered-Nutrition-Recommendation-System.git
    cd nutrition-recommender
+
+   ```
 
 2. Create and activate a virtual environment (optional but recommended):
 
-    ```
-    python -m venv venv
-    source venv/bin/activate   # On Windows: venv\Scripts\activate
+   ```
+   python -m venv venv
+   source venv/bin/activate   # On Windows: venv\Scripts\activate
 
-    ```
+   ```
+
 3. Install required packages:
-     ```
-    pip install -r requirements.txt
-     ```
+   ```
+   pip install -r requirements.txt
+   ```
 4. Run the Streamlit app:
 
-    ```
-    streamlit run main.py
-    
-    ```
-    Start on the home page and select your nutrition goal.
+   ```
+   streamlit run main.py
 
-    Enter your personal data (age, weight, height, meal preference).
+   ```
 
-    Get customized nutrition recommendations.
+   Start on the home page and select your nutrition goal.
 
-    Use the "Return to Home" button to go back to the main menu.
+   Enter your personal data (age, weight, height, meal preference).
+
+   Get customized nutrition recommendations.
+
+   Use the "Return to Home" button to go back to the main menu.
 
 ## How It Works
 
@@ -78,5 +82,3 @@ nutrition-recommender/
 ## Contact
 
     For questions or feedback, reach out at anupam06122001@gmail.com.
-
-
