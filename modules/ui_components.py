@@ -42,7 +42,19 @@ def user_input_page(goal):
         st.write(f"Your BMI: {bmi:.2f} ({bmi_category})")
         
     #  When user clicks the "Get Recommendations" button:
-        if st.button("Get Recommendations"):
+         # Show recommendation only when conditions are met
+        if st.button("Get Recommendations", key=f"reco_btn_{goal}"):
+
+            if goal == "Weight Loss" and bmi <= 18.5:
+                st.warning("⚠️ Your BMI is too low for a weight loss plan.")
+                return
+            elif goal == "Weight Gain" and bmi >= 24.9:
+                st.warning("⚠️ Your BMI is too high for a weight gain plan.")
+                return
+            elif goal == "Healthy Living" and not (18.5 <= bmi <= 24.9):
+                st.warning("⚠️ Your BMI is not in the healthy range for this goal.")
+                return
+
             st.info("Generating recommendations...")
             
              # Train the Random Forest model using the loaded data
@@ -60,8 +72,12 @@ def user_input_page(goal):
              # Display the top recommendations
             st.subheader("Recommended Foods")
             for i, food in enumerate(recs):
-                st.markdown(f"**{i+1}. {food['name']}**")
-                st.markdown(f"- Calories: {food['calories']} kcal\n- Protein: {food['protein']} g")
+                if "calories" in food and "protein" in food:
+                    st.markdown(f"**{i+1}. {food['name']}**")
+                    st.markdown(f"- Calories: {food['calories']} kcal\n- Protein: {food['protein']} g")
+                else:
+                    st.warning(food["name"])
+
      # Catch any runtime errors and show them
     except Exception as e:
         st.error(f"⚠️ An error occurred: {e}")
