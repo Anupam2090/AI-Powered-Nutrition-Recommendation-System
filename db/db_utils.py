@@ -64,16 +64,3 @@ def delete_user(email):
         except:
             pass
 
-
-# def insert_meal(meal_type, name, calories, protein, carbs, fat, fiber):
-#     conn = get_connection()
-#     cursor = conn.cursor()
-#     # Note: your columns must match your table exactly: carbohydrate, total_fat (not 'carbs', 'fat')
-#     query = f"""
-#         INSERT INTO {meal_type} (name, calories, protein, carbohydrate, total_fat, fiber)
-#         VALUES (%s, %s, %s, %s, %s, %s)
-#     """
-#     cursor.execute(query, (name, calories, protein, carbs, fat, fiber))
-#     conn.commit()
-#     cursor.close()
-#     conn.close()

@@ -50,24 +50,6 @@ def show_register():
         st.rerun()
 
 # --------------------------
-# Meal Input UI
-# --------------------------
-# def meal_entry_page():
-#     st.header("🍽️ Add Meal Data to Database")
-#     meal_type = st.selectbox("Meal Type", ["Breakfast", "Lunch", "Dinner"])
-#     name = st.text_input("Food Name")
-#     calories = st.number_input("Calories", step=1.0)
-#     protein = st.number_input("Protein", step=0.1)
-#     carbs = st.number_input("Carbohydrates", step=0.1)
-#     fat = st.number_input("Fat", step=0.1)
-#     fiber = st.number_input("Fiber", step=0.1)
-
-#     if st.button("Submit Meal"):
-#         insert_meal(meal_type.lower(), name, calories, protein, carbs, fat, fiber)
-#         st.success(f"✅ {meal_type} meal added successfully!")
-
-
-# --------------------------
 # Main App Logic
 # --------------------------
 def main():
@@ -111,8 +93,7 @@ def main():
             user_input_page("Weight Gain")
         elif st.session_state.page == "healthy_living":
             user_input_page("Healthy Living")
-        # elif st.session_state.page == "add_meal":
-        #     meal_entry_page()
+        
 
 
 # Run the app
