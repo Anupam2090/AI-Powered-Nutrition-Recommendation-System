@@ -1,37 +1,120 @@
-# Import Streamlit and rename it as 'st' for easier use
+# Import required modules
 import streamlit as st
-# Import custom function to load and clean the dataset
 from modules.data_utils import load_and_prepare_data
-# Import custom function to load or train a machine learning model
 from modules.model_utils import load_or_train_model
-# Import custom UI components for the home page and user input pages
 from modules.ui_components import home_page, user_input_page
+from db.db_utils import delete_user
 
-# Set up the configuration of the Streamlit web app
-# page_title: title shown in browser tab
-# layout="wide": makes full use of screen width
+# Import database utility functions
+from db.db_utils import login_user, register_user
+
+# Streamlit App Setup
 st.set_page_config(page_title="Nutrition Recommender", layout="wide")
-# Define the main function to control app logic
-def main():
-    # If 'page' is not already in session_state, initialize it to "home"
-    # This keeps track of which page the user is on
-    if 'page' not in st.session_state:
-        st.session_state.page = "home"
- # Load and prepare the data, then store it in session_state
-    st.session_state.data = load_and_prepare_data()
-     # Load an existing model or train a new one using the prepared data
-    st.session_state.rf_model = load_or_train_model(st.session_state.data)
 
-    if st.session_state.page == "home":
-        home_page()
-    elif st.session_state.page == "weight_loss":
-        user_input_page("Weight Loss")
-    elif st.session_state.page == "weight_gain":
-        user_input_page("Weight Gain")
-    elif st.session_state.page == "healthy_living":  
-        user_input_page("Healthy Living")
+# --------------------------
+# Login/Register Components
+# --------------------------
+def show_login():
+    st.subheader("🔐 Login")
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+    if st.button("Login"):
+        user = login_user(email, password)
+        if user:
+            st.success("Login successful!")
+            st.session_state.logged_in = True
+            st.session_state.user_email = email
+            st.session_state.page = "home"  # 👈 Go to home or weight_loss etc.
+            st.rerun()
+        else:
+            st.error("Invalid credentials.")
+    if st.button("Go to Register"):
+        st.session_state.page = "register"
+        st.rerun()
+
+
+def show_register():
+    st.subheader("📝 Register")
+    name = st.text_input("Name")
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+    if st.button("Register"):
+        if register_user(name, email, password):
+            st.success("✅ Registration successful! Please login.")
+            st.session_state.page = "login"
+            st.rerun()
+        else:
+            st.error("❌ Registration failed. User might already exist.")
+    if st.button("Go to Login"):
+        st.session_state.page = "login"
+        st.rerun()
+
+# --------------------------
+# Meal Input UI
+# --------------------------
+# def meal_entry_page():
+#     st.header("🍽️ Add Meal Data to Database")
+#     meal_type = st.selectbox("Meal Type", ["Breakfast", "Lunch", "Dinner"])
+#     name = st.text_input("Food Name")
+#     calories = st.number_input("Calories", step=1.0)
+#     protein = st.number_input("Protein", step=0.1)
+#     carbs = st.number_input("Carbohydrates", step=0.1)
+#     fat = st.number_input("Fat", step=0.1)
+#     fiber = st.number_input("Fiber", step=0.1)
+
+#     if st.button("Submit Meal"):
+#         insert_meal(meal_type.lower(), name, calories, protein, carbs, fat, fiber)
+#         st.success(f"✅ {meal_type} meal added successfully!")
+
+
+# --------------------------
+# Main App Logic
+# --------------------------
+def main():
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+    if 'page' not in st.session_state:
+        st.session_state.page = "login"
+
+    if not st.session_state.logged_in:
+        if st.session_state.page == "register":
+            show_register()
+        else:
+            show_login()
     else:
-        st.error("Unknown page!")
-# This runs the main function when the script is executed directly 
+        # Load model/data only once after login
+        if 'data' not in st.session_state:
+            st.session_state.data = load_and_prepare_data()
+            st.session_state.rf_model = load_or_train_model(st.session_state.data)
+
+        # Logout button
+        with st.container():
+            col1, col2 = st.columns([10, 1])
+            with col2:
+                if st.button("🔒 Logout"):
+                    if 'user_email' in st.session_state:
+                        # Delete user from DB
+                        if delete_user(st.session_state.user_email):
+                            st.success("User deleted successfully on logout.")
+                        else:
+                            st.error("Failed to delete user on logout.")
+                    st.session_state.clear()
+                    st.session_state.page = "login"
+                    st.rerun()
+
+        # Page routing
+        if st.session_state.page == "home":
+            home_page()
+        elif st.session_state.page == "weight_loss":
+            user_input_page("Weight Loss")
+        elif st.session_state.page == "weight_gain":
+            user_input_page("Weight Gain")
+        elif st.session_state.page == "healthy_living":
+            user_input_page("Healthy Living")
+        # elif st.session_state.page == "add_meal":
+        #     meal_entry_page()
+
+
+# Run the app
 if __name__ == "__main__":
     main()
