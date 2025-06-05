@@ -34,5 +34,6 @@ Thumbs.db
 # Logs
 *.log
 
+#sql
 .env
 
